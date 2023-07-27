@@ -3,8 +3,6 @@ const {
 } = require('../services/user.service')
 
 exports.getAllUsers = async (req, res) => {
-    
-
     try {
         const users = await getAllUsers()
         if(!users || users.length === 0){

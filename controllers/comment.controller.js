@@ -1,3 +1,4 @@
+const mongoose = require('mongoose')
 const {
     getCommentListWithVideo,
     addComment,
@@ -31,11 +32,16 @@ exports.getCommentListWithVideo = async (req, res) => {
 }
 
 exports.addComment = async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
         const commentData = req.body
-
         const commentToSave = await addComment(commentData)
         
+        await session.commitTransaction();
+        session.endSession();
+
         res.json({
             status: 'success',
             data: {
@@ -43,6 +49,9 @@ exports.addComment = async (req, res) => {
             }
         })
     } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+
         console.error('Error adding comment: ', error)
         res.status(500).json({
             error: 'error adding comment'
@@ -51,6 +60,9 @@ exports.addComment = async (req, res) => {
 }
 
 exports.updateComment = async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
         const commentData = req.body
         const commentId = req.params.id
@@ -63,6 +75,9 @@ exports.updateComment = async (req, res) => {
                 message: 'comment not found'
             })
         }
+
+        await session.commitTransaction();
+        session.endSession();
         
         res.json({
             status: 'success',
@@ -71,6 +86,9 @@ exports.updateComment = async (req, res) => {
             }
         })
     } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+
         console.error('Error updating comment: ', error)
         res.status(500).json({
             error: 'error updating comment'
@@ -79,6 +97,9 @@ exports.updateComment = async (req, res) => {
 }
 
 exports.deleteComment = async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
         const commentId = req.params.id
         
@@ -90,6 +111,9 @@ exports.deleteComment = async (req, res) => {
                 message: 'comment not found'
             })
         }
+
+        await session.commitTransaction();
+        session.endSession();
         
         res.json({
             status: 'success',
@@ -98,6 +122,9 @@ exports.deleteComment = async (req, res) => {
             }
         })
     } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+
         console.error('Error deleting comment: ', error)
         res.status(500).json({
             error: 'error deleting comment'

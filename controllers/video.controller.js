@@ -1,3 +1,4 @@
+const mongoose = require('mongoose')
 const {
     getVideoThumbnailList,
     getVideoWithCommentsWithUser,
@@ -89,9 +90,15 @@ exports.getVideoWithCommentsWithUser = async (req, res) => {
 // }
 
 exports.addVideo = async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
         const videoData = req.body
         const videoToSave = await addVideo(videoData)
+
+        await session.commitTransaction();
+        session.endSession();
         
         res.json({
             status: 'success',
@@ -100,6 +107,9 @@ exports.addVideo = async (req, res) => {
             }
         })
     } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+
         console.error('Error adding video: ', error)
         res.status(500).json({
             error: 'error adding video'
@@ -108,6 +118,9 @@ exports.addVideo = async (req, res) => {
 }
 
 exports.updateVideo = async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
         const videoData = req.body
         const videoId = req.params.id
@@ -120,6 +133,9 @@ exports.updateVideo = async (req, res) => {
                 message: 'video not found'
             })
         }
+
+        await session.commitTransaction();
+        session.endSession();
         
         res.json({
             status: 'success',
@@ -128,6 +144,9 @@ exports.updateVideo = async (req, res) => {
             }
         })
     } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+
         console.error('Error updating video: ', error)
         res.status(500).json({
             error: 'error updating video'
@@ -136,6 +155,9 @@ exports.updateVideo = async (req, res) => {
 }
 
 exports.deleteVideo = async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
         const videoId = req.params.id
         const videoToDelete = await deleteVideo(videoId)
@@ -146,6 +168,9 @@ exports.deleteVideo = async (req, res) => {
                 message: 'video not found'
             })
         }
+
+        await session.commitTransaction();
+        session.endSession();
         
         res.json({
             status: 'success',
@@ -154,6 +179,9 @@ exports.deleteVideo = async (req, res) => {
             }
         })
     } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+
         console.error('Error deleting video: ', error)
         res.status(500).json({
             error: 'error deleting video'

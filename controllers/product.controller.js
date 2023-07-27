@@ -1,3 +1,4 @@
+const mongoose = require('mongoose')
 const {
     getProductList,
     getProductById,
@@ -85,10 +86,14 @@ exports.getProductsByVideoId = async (req, res) => {
 }
 
 exports.addProduct = async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
     try {
         const productData = req.body
-    
         const productToSave = await addProduct(productData)
+
+        await session.commitTransaction();
+        session.endSession();
 
         res.json({
             status: 'success',
@@ -97,6 +102,9 @@ exports.addProduct = async (req, res) => {
             }
         })
     } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+
         console.error('Error adding product: ', error)
         res.status(500).json({
             error: 'error adding product '
@@ -105,6 +113,9 @@ exports.addProduct = async (req, res) => {
 }
 
 exports.updateProduct = async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
         const productData = req.body
         const productId = req.params.id
@@ -118,6 +129,9 @@ exports.updateProduct = async (req, res) => {
             })
         }
 
+        await session.commitTransaction();
+        session.endSession();
+
         res.json({
             status: 'success',
             data: {
@@ -125,6 +139,9 @@ exports.updateProduct = async (req, res) => {
             }
         })
     } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+
         console.error('Error updating product: ', error)
         res.status(500).json({
             error: 'error updating product '
@@ -133,6 +150,9 @@ exports.updateProduct = async (req, res) => {
 }
 
 exports.deleteProduct = async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
         const productId = req.params.id
         const productToDelete = await deleteProduct(productId)
@@ -144,6 +164,9 @@ exports.deleteProduct = async (req, res) => {
             })
         }
 
+        await session.commitTransaction();
+        session.endSession();
+
         res.json({
             status: 'success',
             data: {
@@ -151,6 +174,9 @@ exports.deleteProduct = async (req, res) => {
             }
         })
     } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+
         console.error('Error deleting product: ', error)
         res.status(500).json({
             error: 'error deleting product '
