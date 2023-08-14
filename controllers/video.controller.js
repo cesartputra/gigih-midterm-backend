@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const {
     getVideoThumbnailList,
     getVideoWithCommentsWithUser,
+    getVideoById,
     addVideo,
     updateVideo,
     deleteVideo
@@ -34,42 +35,16 @@ exports.getVideoThumbnailList = async (req, res) => {
     }
 }
 
-exports.getVideoWithCommentsWithUser = async (req, res) => {
-    try {
-        const current = parseInt(req.query.current)
-        const size = parseInt(req.query.size)
-        const videoId = req.params.id
-
-        const video = await getVideoWithCommentsWithUser(videoId, current, size)
-
-        if (!video) {
-            return res.status(404).json({
-                status: 'failed',
-                message: 'video not found'
-            })
-        }
-        
-        res.json({
-            status: 'success',
-            data: {
-                video
-            }
-        })
-    } catch (error) {
-        console.error('Error getting video by ID: ', error)
-        res.status(500).json({
-            error: 'error getting video by ID'
-        })
-    }
-}
-
-// exports.getVideoById = async (req, res) => {
+// exports.getVideoWithCommentsWithUser = async (req, res) => {
 //     try {
+//         const current = parseInt(req.query.current)
+//         const size = parseInt(req.query.size)
 //         const videoId = req.params.id
-//         const video = await getVideoById(videoId)
+
+//         const video = await getVideoWithCommentsWithUser(videoId, current, size)
 
 //         if (!video) {
-//             res.status(404).json({
+//             return res.status(404).json({
 //                 status: 'failed',
 //                 message: 'video not found'
 //             })
@@ -88,6 +63,32 @@ exports.getVideoWithCommentsWithUser = async (req, res) => {
 //         })
 //     }
 // }
+
+exports.getVideoById = async (req, res) => {
+    try {
+        const videoId = req.params.id
+        const video = await getVideoById(videoId)
+
+        if (!video) {
+            res.status(404).json({
+                status: 'failed',
+                message: 'video not found'
+            })
+        }
+        
+        res.json({
+            status: 'success',
+            data: {
+                video
+            }
+        })
+    } catch (error) {
+        console.error('Error getting video by ID: ', error)
+        res.status(500).json({
+            error: 'error getting video by ID'
+        })
+    }
+}
 
 exports.addVideo = async (req, res) => {
     const session = await mongoose.startSession();

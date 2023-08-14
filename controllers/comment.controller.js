@@ -1,19 +1,46 @@
 const mongoose = require('mongoose')
 const {
-    getCommentListWithVideo,
+    getCommentsByVideoId,
     addComment,
     updateComment,
     deleteComment
 } = require('../services/comment.service')
 
-exports.getCommentListWithVideo = async (req, res) => {
-    try {
-        const comments = await getCommentListWithVideo()
+// exports.getCommentListWithVideo = async (req, res) => {
+//     try {
+//         const comments = await getCommentListWithVideo()
 
-        if(!comments){
+//         if(!comments){
+//             return res.status(404).json({
+//                 status: 'failed',
+//                 message: 'products not found'
+//             })
+//         }
+
+//         res.json({
+//             status: 'success',
+//             data: {
+//                 comments
+//             }
+//         })
+//     } catch (error) {
+//         console.error('Error getting comments with video: ', error)
+//         res.status(500).json({
+//             error: 'error getting comments with video'
+//         })
+//     }
+// }
+
+exports.getCommentsByVideoId = async (req, res) => {
+    const videoId = req.query.videoId
+    
+    try {
+        const comments = await getCommentsByVideoId(videoId)
+
+        if(!comments || comments.length === 0){
             return res.status(404).json({
                 status: 'failed',
-                message: 'products not found'
+                message: 'comments not found'
             })
         }
 
@@ -24,9 +51,9 @@ exports.getCommentListWithVideo = async (req, res) => {
             }
         })
     } catch (error) {
-        console.error('Error getting comments with video: ', error)
+        console.error('Error getting comments by video id: ', error)
         res.status(500).json({
-            error: 'error getting comments with video'
+            error: 'error getting comments by video id'
         })
     }
 }

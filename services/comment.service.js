@@ -1,21 +1,59 @@
+const { mongoose } = require('mongoose');
 const Comment = require('../models/comment.model')
 
-exports.getCommentsByVideoId = async () => {
+exports.getCommentsByVideoId = async (videoId) => {
     const pipeline = [
         {
+            $match: {
+                videoId: new mongoose.Types.ObjectId(videoId) // Convert videoId to ObjectId
+            }
+        },
+        {
             $lookup: {
-                from: 'videos',
-                localField: 'videoId',
+                from: 'users',
+                localField: 'userId',
                 foreignField: '_id',
-                as: 'video',
+                as: 'user'
+            }
+        },
+        {
+            $unwind: '$user' // Unwind the user array created by the $lookup stage
+        },
+        {
+            $project: {
+                _id: 1,
+                content: 1,
+                userId: 1,
+                videoId: 1,
+                createdAt: 1,
+                updatedAt: 1,
+                'user._id': 1,
+                'user.username': 1,
+                'user.avatar': 1
             }
         }
     ]
-
     const comments = await Comment.aggregate(pipeline)
-
+    // const comments = await Comment.find({ videoId: videoId })
+    // console.log(comments);
     return comments
 }
+// exports.getCommentsByVideoId = async () => {
+//     const pipeline = [
+//         {
+//             $lookup: {
+//                 from: 'videos',
+//                 localField: 'videoId',
+//                 foreignField: '_id',
+//                 as: 'video',
+//             }
+//         }
+//     ]
+
+//     const comments = await Comment.aggregate(pipeline)
+
+//     return comments
+// }
 
 exports.addComment = async (commentData) => {
     const newComment = new Comment({

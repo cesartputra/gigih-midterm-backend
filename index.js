@@ -3,6 +3,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
 const port = 3000
+const cors = require('cors')
 
 const mongoose = require('mongoose')
 const mongoString = process.env.DATABASE_URL
@@ -29,6 +30,11 @@ app.use(
         extended: true
     })
 )
+
+const corsOpt = {
+    origin: 'http://localhost:3000'
+}
+app.use(cors())
 
 app.use('/api/auth', authRoute)
 app.use('/api/videos', videoRoute)

@@ -19,6 +19,10 @@ const productSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'Video'
     },
+    imageUrl: {
+        required: true,
+        type: String
+    },
     productUrl: {
         required: true,
         type: String

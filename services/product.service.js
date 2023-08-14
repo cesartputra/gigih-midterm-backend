@@ -25,6 +25,7 @@ exports.addProduct = async (productData) => {
         description: productData.description,
         price: productData.price,
         videoId: productData.videoId,
+        imageUrl: productData.imageUrl,
         productUrl: productData.productUrl,
         createdAt: Date.now(),
         updatedAt: Date.now()

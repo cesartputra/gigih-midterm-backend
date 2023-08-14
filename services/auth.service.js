@@ -26,7 +26,8 @@ exports.registerUser = async (userData) => {
     
     const newUser = new User({
         username: userData.username,
-        password: encryptedPassword
+        password: encryptedPassword,
+        avatar: userData.avatar
     })
 
     const userToSave = await newUser.save()

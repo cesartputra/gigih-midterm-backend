@@ -61,7 +61,7 @@ const videoSchema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model("Video", videoSchema)
+module.exports = mongoose.model(Video, videoSchema)
 ```
 ### Product
 
@@ -101,7 +101,7 @@ const productSchema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model("Product", productSchema)
+module.exports = mongoose.model(Product, productSchema)
 ```
 ### Comment
 
@@ -134,7 +134,7 @@ const commentSchema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model("Comment", commentSchema)
+module.exports = mongoose.model(Comment, commentSchema)
 ```
 ### User
 
@@ -157,7 +157,7 @@ const userSchema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model("User", userSchema)
+module.exports = mongoose.model(User, userSchema)
 ```
 ## API Reference
 
@@ -663,9 +663,9 @@ Creates a new Comment and returns the new object.
 * **Data Params**  
 ```
 {
-    "content": string,
-    "userId": string,
-    "videoId": string
+    content: string,
+    userId: string,
+    videoId: string
 }
 ```
 * **Success Response:**  
@@ -783,9 +783,9 @@ Update a Comment and returns the updated object.
 * **Data Params**  
 ```
 {
-    "content": string,
-    "userId": string,
-    "videoId": string
+    content: string,
+    userId: string,
+    videoId: string
 }
 ```
 * **Success Response:**  
@@ -919,8 +919,8 @@ Creates a new User and returns the new object.
 * **Data Params**  
 ```
 {
-    "username": string,
-    "password": string
+    username: string,
+    password: string
 }
 ```
 * **Success Response:**  
