@@ -1,22 +1,18 @@
 const User = require('../models/user.model')
 
 const bcrypt = require('bcrypt');
-const mongoose = require('mongoose')
+const jwt = require('jsonwebtoken');
+const SECRET_KEY = process.env.JWT_SECRET;
 
 async function encryptPassword(plainPassword){
     const saltRounds = 10;
-    const encryptedPassword = bcrypt.hashSync(plainPassword, saltRounds)
+    const encryptedPassword = await bcrypt.hashSync(plainPassword, saltRounds)
 
     return encryptedPassword
 }
 
 async function checkPassword(plainPassword, storedPassword){
-    
-    // const hash = await encryptPassword(plainPassword)
-    // const hash2 = await encryptPassword('Cesar123')
-    // console.log(hash)
-    // console.log(hash2)
-    const check =  bcrypt.compare(plainPassword, storedPassword)
+    const check = await bcrypt.compare(plainPassword, storedPassword)
 
     return check
 }
@@ -40,14 +36,18 @@ exports.loginUser = async (loginData) => {
     const user = await User.findOne({ username: loginData.username })
 
     if(!user){
-        return
+        return null
     }
 
     const passwordCheck = await checkPassword(loginData.password, user.password)
     
     if(!passwordCheck){
-        return
+        return null
     }
 
-    return user
+    return {
+        id: user._id,
+        username: user.username,
+        avatar: user.avatar
+    };
 }

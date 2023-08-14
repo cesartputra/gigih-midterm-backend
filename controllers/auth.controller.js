@@ -1,4 +1,6 @@
 const mongoose = require('mongoose')
+const jwt = require('jsonwebtoken');
+const SECRET_KEY = process.env.JWT_SECRET;
 const {
     registerUser,
     loginUser
@@ -12,13 +14,16 @@ exports.registerUser = async (req, res) => {
         const registerUserData = req.body
         const userToSave = await registerUser(registerUserData)
 
+        const token = jwt.sign({ userId: userToSave._id }, SECRET_KEY, { expiresIn: '1h' });
+
         await session.commitTransaction();
         session.endSession();
 
         res.json({
             status: 'success',
             data: {
-                userToSave
+                userToSave,
+                token
             }
         })
     } catch (error) {
@@ -43,10 +48,13 @@ exports.loginUser = async (req, res) => {
             })
         }
 
+        const token = jwt.sign({ userId: userToLogin._id }, SECRET_KEY, { expiresIn: '1h' });
+
         res.json({
             status: 'success',
             data: {
-                userToLogin
+                userToLogin,
+                token
             }
         })
     } catch (error) {
